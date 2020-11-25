@@ -6,78 +6,74 @@ import math
 
 def mul(x, y):
     ":math:`f(x, y) = x * y`"
-    raise NotImplementedError('Need to include this file from past assignment.')
+    return float(x * y)
 
 
 def id(x):
     ":math:`f(x) = x`"
-    raise NotImplementedError('Need to include this file from past assignment.')
+    return float(x)
 
 
 def add(x, y):
     ":math:`f(x, y) = x + y`"
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # TODO: Implement for Task 0.1.
+    return float(x + y)
 
 
 def neg(x):
     ":math:`f(x) = -x`"
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # TODO: Implement for Task 0.1.
+    return (-1.0) * x
 
 
 def lt(x, y):
     ":math:`f(x) =` 1.0 if x is less than y else 0.0"
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # TODO: Implement for Task 0.1.
+    if x < y:
+        return 1.0
+    else:
+        return 0.0
 
 
 def eq(x, y):
     ":math:`f(x) =` 1.0 if x is equal to y else 0.0"
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # TODO: Implement for Task 0.1.
+    if x == y:
+        return 1.0
+    else:
+        return 0.0
 
 
 def max(x, y):
     ":math:`f(x) =` x if x is greater than y else y"
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # TODO: Implement for Task 0.1.
+    if x > y:
+        return float(x)
+    else:
+        return float(y)
 
 
 def sigmoid(x):
-    r"""
-    :math:`f(x) =  \frac{1.0}{(1.0 + e^{-x})}`
-
-    (See `<https://en.wikipedia.org/wiki/Sigmoid_function>`_ .)
-
-    Calculate as
-
-    :math:`f(x) =  \frac{1.0}{(1.0 + e^{-x})}` if x >=0 else :math:`\frac{e^x}{(1.0 + e^{x})}`
-
-    for stability.
-
-    Args:
-        x (float): input
-
-    Returns:
-        float : sigmoid value
-    """
-    raise NotImplementedError('Need to include this file from past assignment.')
+    if x >= 0:
+        return 1 / (1.0 + math.exp(-x))
+    else:
+        return math.exp(x) / (1.0 + math.exp(x))
 
 
 def relu(x):
-    """
-    :math:`f(x) =` x if x is greater than 0, else 0
-
-    (See `<https://en.wikipedia.org/wiki/Rectifier_(neural_networks)>`_ .)
-
-    Args:
-        x (float): input
-
-    Returns:
-        float : relu value
-    """
-    raise NotImplementedError('Need to include this file from past assignment.')
+    if x > 0:
+        return float(x)
+    else:
+        return 0.0
 
 
 def relu_back(x, y):
     ":math:`f(x) =` y if x is greater than 0 else 0"
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # TODO: Implement for Task 0.1.
+    if x > 0:
+        return float(y)
+    else:
+        return 0.0
 
 
 EPS = 1e-6
@@ -126,7 +122,14 @@ def map(fn):
         function : A function that takes a list, applies `fn` to each element, and returns a
         new list
     """
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # raise NotImplementedError('Need to include this file from past assignment.')
+    def nested_function(ls):
+        return_list = [None] * len(ls)
+        for i, l in enumerate(ls):
+            return_list[i] = fn(l)
+        return return_list
+
+    return nested_function
 
 
 def negList(ls):
@@ -150,7 +153,19 @@ def zipWith(fn):
         applying fn(x, y) on each pair of elements.
 
     """
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # raise NotImplementedError('Need to include this file from past assignment.')
+    def nested_function(ls1, ls2):
+        # Check both lists have the same lengths
+        if len(ls1) != len(ls2):
+            raise ValueError("Lists must have the same length")
+
+        return_list = [None] * len(ls1)
+        for i, (l1, l2) in enumerate(zip(ls1, ls2)):
+            return_list[i] = fn(l1, l2)
+
+        return return_list
+
+    return nested_function
 
 
 def addLists(ls1, ls2):
@@ -174,14 +189,31 @@ def reduce(fn, start):
         :math:`x_1 \ldots x_n` and computes the reduction :math:`fn(x_3, fn(x_2,
         fn(x_1, x_0)))`
     """
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # raise NotImplementedError('Need to include this file from past assignment.')
+    def nested_function(ls):
+        if len(ls) == 0:
+            if start is None:
+                return 0
+            else:
+                return start
+        it = iter(ls)
+        if start is None:
+            value = next(it)
+        else:
+            value = start
+        for element in it:
+            value = fn(value, element)
+        return value
+
+    return nested_function
 
 
 def sum(ls):
     "Sum up a list using :func:`reduce` and :func:`add`."
-    raise NotImplementedError('Need to include this file from past assignment.')
+    return reduce(add)(ls)
 
 
 def prod(ls):
     "Product of a list using :func:`reduce` and :func:`mul`."
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # return reduce(mul)(ls)
+    return reduce(mul)(ls)

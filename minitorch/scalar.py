@@ -56,31 +56,41 @@ class Scalar(Variable):
         return Mul.apply(self, Inv.apply(b))
 
     def __add__(self, b):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        return Add.apply(self, b)
 
     def __lt__(self, b):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        return LT.apply(self, b)
 
     def __gt__(self, b):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        return LT.apply(b, self)
 
     def __sub__(self, b):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        # b = operators.neg(b)
+        return Add.apply(self, -b)
 
     def __neg__(self):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        return Neg.apply(self)
 
     def log(self):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        return Log.apply(self)
 
     def exp(self):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        return Exp.apply(self)
 
     def sigmoid(self):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        return Sigmoid.apply(self)
 
     def relu(self):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        return ReLU.apply(self)
 
     def get_data(self):
         return self.data
@@ -172,11 +182,17 @@ class Mul(ScalarFunction):
 
     @staticmethod
     def forward(ctx, a, b):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        ctx.save_for_backward(a, b)
+        # return operators.mul(a, b)
+        c = a * b
+        return c
 
     @staticmethod
     def backward(ctx, d_output):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.4.
+        a, b = ctx.saved_values
+        return b * d_output, a * d_output
 
 
 class Inv(ScalarFunction):
@@ -184,11 +200,15 @@ class Inv(ScalarFunction):
 
     @staticmethod
     def forward(ctx, a):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        ctx.save_for_backward(a)
+        return operators.inv(a)
 
     @staticmethod
     def backward(ctx, d_output):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.4.
+        a = ctx.saved_values
+        return operators.inv_back(a, d_output)
 
 
 class Neg(ScalarFunction):
@@ -196,11 +216,13 @@ class Neg(ScalarFunction):
 
     @staticmethod
     def forward(ctx, a):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        return -a
 
     @staticmethod
     def backward(ctx, d_output):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.4.
+        return -d_output
 
 
 class Sigmoid(ScalarFunction):
@@ -208,11 +230,16 @@ class Sigmoid(ScalarFunction):
 
     @staticmethod
     def forward(ctx, a):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        out = operators.sigmoid(a)
+        ctx.save_for_backward(out)
+        return out
 
     @staticmethod
     def backward(ctx, d_output):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.4.
+        sigma = ctx.saved_values
+        return sigma * (1.0 - sigma) * d_output
 
 
 class ReLU(ScalarFunction):
@@ -220,11 +247,15 @@ class ReLU(ScalarFunction):
 
     @staticmethod
     def forward(ctx, a):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        ctx.save_for_backward(a)
+        return operators.relu(a)
 
     @staticmethod
     def backward(ctx, d_output):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.4.
+        a = ctx.saved_values
+        return operators.relu_back(a, d_output)
 
 
 class Exp(ScalarFunction):
@@ -232,11 +263,16 @@ class Exp(ScalarFunction):
 
     @staticmethod
     def forward(ctx, a):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.2.
+        out = operators.exp(a)
+        ctx.save_for_backward(out)
+        return out
 
     @staticmethod
     def backward(ctx, d_output):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 1.4.
+        out = ctx.saved_values
+        return d_output * out
 
 
 def derivative_check(f, *scalars):

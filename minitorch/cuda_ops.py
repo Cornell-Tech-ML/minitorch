@@ -41,8 +41,17 @@ def tensor_map(fn):
     """
 
     def _map(out, out_shape, out_strides, out_size, in_storage, in_shape, in_strides):
-        raise NotImplementedError('Need to include this file from past assignment.')
-
+        # raise NotImplementedError('Need to include this file from past assignment.')
+        x = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
+        if x >= 0 and x < out_size:
+            out_index = cuda.local.array(MAX_DIMS, numba.int32)
+            in_index = cuda.local.array(MAX_DIMS, numba.int32)
+            count(x, out_shape, out_index)
+            o = index_to_position(out_index, out_strides)
+            broadcast_index(out_index, out_shape, in_shape, in_index)
+            j = index_to_position(in_index, in_strides)
+            out[o] = fn(in_storage[j])
+                
     return cuda.jit()(_map)
 
 
@@ -99,7 +108,19 @@ def tensor_zip(fn):
         b_shape,
         b_strides,
     ):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # raise NotImplementedError('Need to include this file from past assignment.')
+        x = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
+        if x >= 0 and x < out_size:
+            out_index = cuda.local.array(MAX_DIMS, numba.int32)
+            a_index = cuda.local.array(MAX_DIMS, numba.int32)
+            b_index = cuda.local.array(MAX_DIMS, numba.int32)
+            count(x, out_shape, out_index)
+            o = index_to_position(out_index, out_strides)
+            broadcast_index(out_index, out_shape, a_shape, a_index)
+            j = index_to_position(a_index, a_strides)
+            broadcast_index(out_index, out_shape, b_shape, b_index)
+            k = index_to_position(b_index, b_strides)
+            out[o] = fn(a_storage[j], b_storage[k])
 
     return cuda.jit()(_zip)
 
@@ -151,7 +172,20 @@ def tensor_reduce(fn):
         reduce_shape,
         reduce_size,
     ):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # raise NotImplementedError('Need to include this file from past assignment.')
+        x = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
+        if x >= 0 and x < out_size:
+            out_index = cuda.local.array(MAX_DIMS, numba.int32)
+            a_index = cuda.local.array(MAX_DIMS, numba.int32)
+            count(x, out_shape, out_index)
+            o = index_to_position(out_index, out_strides)
+            for s in range(reduce_size):
+                count(s, reduce_shape, a_index)
+                for k in range(len(reduce_shape)):
+                    if reduce_shape[k] != 1:
+                        out_index[k] = a_index[k]
+                j = index_to_position(out_index, a_strides)
+                out[o] = fn(out[o], a_storage[j])
 
     return cuda.jit()(_reduce)
 
@@ -236,7 +270,23 @@ def tensor_matrix_multiply(
         None : Fills in `out`
     """
 
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # raise NotImplementedError('Need to include this file from past assignment.')
+    x = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
+    if x >= 0 and x < out_size:
+        out_index = cuda.local.array(MAX_DIMS, numba.int32)
+        count(x, out_shape, out_index)
+        o = index_to_position(out_index, out_strides)
+        a_index = cuda.local.array(MAX_DIMS, numba.int32)
+        b_index = cuda.local.array(MAX_DIMS, numba.int32)
+        broadcast_index(out_index, out_shape, a_shape, a_index)
+        broadcast_index(out_index, out_shape, b_shape, b_index)
+        for l in range(a_shape[-1]):
+            a_index[len(a_shape) - 1] = l
+            b_index[len(b_shape) - 2] = l
+            # print(a_index, b_index)
+            a = index_to_position(a_index, a_strides)
+            b = index_to_position(b_index, b_strides)
+            out[o] += a_storage[a] * b_storage[b]
 
 
 def matrix_multiply(a, b):
