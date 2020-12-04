@@ -120,6 +120,7 @@ def shape_broadcast(shape1, shape2):
                 raise IndexingError("Broadcast Failure {a} {b}")
     return tuple(reversed(c_rev))
 
+
 def strides_from_shape(shape):
     layout = [1]
     offset = 1

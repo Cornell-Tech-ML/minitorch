@@ -22,7 +22,7 @@ def central_difference(f, *vals, arg=0, epsilon=1e-6):
     Returns:
         float : An approximation of :math:`f'_i(x_0, \ldots, x_{n-1})`
     """
-    raise NotImplementedError('Need to include this file from past assignment.')
+    raise NotImplementedError("Need to include this file from past assignment.")
 
 
 ## Task 1.2 and 1.4

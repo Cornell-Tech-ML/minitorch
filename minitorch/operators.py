@@ -6,24 +6,28 @@ import math
 
 def mul(x, y):
     ":math:`f(x, y) = x * y`"
-    return float(x * y)
+    return x * y
+    # return float(x * y)
 
 
 def id(x):
     ":math:`f(x) = x`"
-    return float(x)
+    return x
+    # return float(x)
 
 
 def add(x, y):
     ":math:`f(x, y) = x + y`"
     # TODO: Implement for Task 0.1.
-    return float(x + y)
+    return x + y
+    # return float(x + y)
 
 
 def neg(x):
     ":math:`f(x) = -x`"
     # TODO: Implement for Task 0.1.
-    return (-1.0) * x
+    return -x
+    # return (-1.0) * x
 
 
 def lt(x, y):
@@ -48,9 +52,11 @@ def max(x, y):
     ":math:`f(x) =` x if x is greater than y else y"
     # TODO: Implement for Task 0.1.
     if x > y:
-        return float(x)
+        return x
+        # return float(x)
     else:
-        return float(y)
+        return y
+        # return float(y)
 
 
 def sigmoid(x):
@@ -62,7 +68,8 @@ def sigmoid(x):
 
 def relu(x):
     if x > 0:
-        return float(x)
+        return x
+        # return float(x)
     else:
         return 0.0
 
@@ -71,7 +78,8 @@ def relu_back(x, y):
     ":math:`f(x) =` y if x is greater than 0 else 0"
     # TODO: Implement for Task 0.1.
     if x > 0:
-        return float(y)
+        return y
+        # return float(y)
     else:
         return 0.0
 
@@ -190,30 +198,37 @@ def reduce(fn, start):
         fn(x_1, x_0)))`
     """
     # raise NotImplementedError('Need to include this file from past assignment.')
-    def nested_function(ls):
-        if len(ls) == 0:
-            if start is None:
-                return 0
-            else:
-                return start
-        it = iter(ls)
-        if start is None:
-            value = next(it)
-        else:
-            value = start
-        for element in it:
-            value = fn(value, element)
-        return value
+    # def nested_function(ls):
+    #     if len(ls) == 0:
+    #         if start is None:
+    #             return 0
+    #         else:
+    #             return start
+    #     it = iter(ls)
+    #     if start is None:
+    #         value = next(it)
+    #     else:
+    #         value = start
+    #     for element in it:
+    #         value = fn(value, element)
+    #     return value
 
-    return nested_function
+    # return nested_function
+    def _reduce(ls):
+        val = start
+        for l in ls:
+            val = fn(val, l)
+        return val
+
+    return _reduce
 
 
 def sum(ls):
     "Sum up a list using :func:`reduce` and :func:`add`."
-    return reduce(add)(ls)
+    return reduce(add, 0.0)(ls)
 
 
 def prod(ls):
     "Product of a list using :func:`reduce` and :func:`mul`."
     # return reduce(mul)(ls)
-    return reduce(mul)(ls)
+    return reduce(mul, 1.0)(ls)

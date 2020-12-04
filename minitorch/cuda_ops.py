@@ -51,7 +51,7 @@ def tensor_map(fn):
             broadcast_index(out_index, out_shape, in_shape, in_index)
             j = index_to_position(in_index, in_strides)
             out[o] = fn(in_storage[j])
-                
+
     return cuda.jit()(_map)
 
 

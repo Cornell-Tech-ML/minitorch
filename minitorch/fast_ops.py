@@ -44,7 +44,7 @@ def tensor_map(fn):
             or (out_strides != in_strides).any()
             or (out_shape != in_shape).any()
         ):
-            for i in prange(len(ou)):
+            for i in prange(len(out)):
                 out_index = np.empty(MAX_DIMS, np.int32)
                 in_index = np.empty(MAX_DIMS, np.int32)
                 count(i, out_shape, out_index)
@@ -221,7 +221,6 @@ def tensor_reduce(fn):
                 j = index_to_position(out_index, a_strides)
                 out[o] = fn(out[o], a_storage[j])
 
-
     return njit(parallel=True)(_reduce)
 
 
@@ -332,7 +331,6 @@ def tensor_matrix_multiply(
             a = index_to_position(a_index, a_strides)
             b = index_to_position(b_index, b_strides)
             out[o] += a_storage[a] * b_storage[b]
-    
 
 
 def matrix_multiply(a, b):
