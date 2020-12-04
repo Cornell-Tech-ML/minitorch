@@ -3,7 +3,7 @@ from .tensor_data import (
     count,
     index_to_position,
     broadcast_index,
-    MAX_DIMS,
+    # MAX_DIMS,
 )
 from .tensor_functions import Function
 from numba import njit, prange
@@ -65,7 +65,6 @@ def tensor_conv1d(
     batch_, out_channels, out_width = out_shape
     batch, in_channels, width = input_shape
     out_channels_, in_channels_, kw = weight_shape
-
     assert (
         batch == batch_
         and in_channels == in_channels_
@@ -73,9 +72,31 @@ def tensor_conv1d(
     )
     s1 = input_strides
     s2 = weight_strides
-
     # TODO: Implement for Task 4.1.
-    raise NotImplementedError('Need to implement for Task 4.1')
+    # raise NotImplementedError('Need to implement for Task 4.1')
+    for i in prange(len(out)):
+        out_index = np.empty(len(out_shape), np.int32)
+        in_index = np.empty(len(input_shape), np.int32)
+        weight_index = np.empty(len(weight_shape), np.int32)
+        count(i, out_shape, out_index)
+        in_index[0] = out_index[0]
+        weight_index[0] = out_index[1]
+        # o = index_to_position(out_index, out_strides)
+        acc = 0
+        for j in range(in_channels):
+            in_index[1] = j
+            weight_index[1] = j
+            for w in range(kw):
+                if reverse:
+                    in_index[2] = out_index[2] - kw + w + 1
+                else:
+                    in_index[2] = out_index[2] + w
+                weight_index[2] = w
+                if in_index[2] < input_shape[2] and in_index[2] >= 0:
+                    i_position = index_to_position(in_index, s1)
+                    w_position = index_to_position(weight_index, s2)
+                    acc += input[i_position] * weight[w_position]
+        out[i] = acc
 
 
 class Conv1dFun(Function):
@@ -196,7 +217,39 @@ def tensor_conv2d(
     s2 = weight_strides
 
     # TODO: Implement for Task 4.2.
-    raise NotImplementedError('Need to implement for Task 4.2')
+    # raise NotImplementedError('Need to implement for Task 4.2')
+    for i in prange(len(out)):
+        out_index = np.empty(len(out_shape), np.int32)
+        in_index = np.empty(len(input_shape), np.int32)
+        weight_index = np.empty(len(weight_shape), np.int32)
+        count(i, out_shape, out_index)
+        in_index[0] = out_index[0]
+        weight_index[0] = out_index[1]
+        # o = index_to_position(out_index, out_strides)
+        acc = 0
+        for j in range(in_channels):
+            in_index[1] = j
+            weight_index[1] = j
+            for w in range(kw):
+                for h in range(kh):
+                    if reverse:
+                        in_index[2] = out_index[2] - kh + h + 1
+                        in_index[3] = out_index[3] - kw + w + 1
+                    else:
+                        in_index[2] = out_index[2] + h
+                        in_index[3] = out_index[3] + w
+                    weight_index[2] = h
+                    weight_index[3] = w
+                    if (
+                        in_index[2] < input_shape[2]
+                        and in_index[2] >= 0
+                        and in_index[3] < input_shape[3]
+                        and in_index[3] >= 0
+                    ):
+                        i_position = index_to_position(in_index, s1)
+                        w_position = index_to_position(weight_index, s2)
+                        acc += input[i_position] * weight[w_position]
+        out[i] = acc
 
 
 class Conv2dFun(Function):

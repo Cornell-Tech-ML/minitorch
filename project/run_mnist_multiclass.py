@@ -1,4 +1,4 @@
-from mnist import MNIST
+from mnist.loader import MNIST
 import minitorch
 import visdom
 import numpy
@@ -35,7 +35,8 @@ class Linear(minitorch.Module):
 
     def forward(self, x):
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError('Need to implement for Task 4.5')
+        # raise NotImplementedError('Need to implement for Task 4.5')
+        return x @ self.weights.value + self.bias.value.view(self.out_size)
 
 
 class Conv2d(minitorch.Module):
@@ -46,7 +47,9 @@ class Conv2d(minitorch.Module):
 
     def forward(self, input):
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError('Need to implement for Task 4.5')
+        # raise NotImplementedError('Need to implement for Task 4.5')
+        # return x @ self.weights.value + self.bias.value.view(self.out_size)
+        return minitorch.conv2d(input, self.weights.value) + self.bias.value
 
 
 class Network(minitorch.Module):
@@ -72,11 +75,25 @@ class Network(minitorch.Module):
         self.out = None
 
         # TODO: Implement for Task 4.4.
-        raise NotImplementedError('Need to implement for Task 4.4')
+        # raise NotImplementedError('Need to implement for Task 4.4')
+        self.conv1Layer = Conv2d(1, 4, 3, 3)
+        self.conv2Layer = Conv2d(4, 8, 3, 3)
+        self.linear1Layer = Linear(392, 64)
+        self.linear2Layer = Linear(64, C)
 
     def forward(self, x):
         # TODO: Implement for Task 4.4.
-        raise NotImplementedError('Need to implement for Task 4.4')
+        # raise NotImplementedError('Need to implement for Task 4.4')
+        self.mid = self.conv1Layer.forward(x).relu()
+        self.out = self.conv2Layer.forward(self.mid).relu()
+        h = minitorch.avgpool2d(self.out, (4, 4)).view(BATCH, 392)
+        # h = minitorch.dropout(self.linear1Layer.forward(h).relu(), .25)
+        if self.mode == "train":
+            h = minitorch.dropout(self.linear1Layer.forward(h).relu(), 0.25)
+        else:
+            h = self.linear1Layer.forward(h).relu()
+        h = self.linear2Layer.forward(h)
+        return minitorch.logsoftmax(h, 1)
 
 
 def make_mnist(start, stop):

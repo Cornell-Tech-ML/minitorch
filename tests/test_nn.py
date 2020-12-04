@@ -2,6 +2,7 @@ import minitorch
 from hypothesis import given
 from .strategies import tensors, assert_close
 import pytest
+import numpy as np
 
 
 @pytest.mark.task4_3
@@ -31,7 +32,9 @@ def test_avg(t):
 @given(tensors(shape=(2, 3, 4)))
 def test_max(t):
     # TODO: Implement for Task 4.4.
-    raise NotImplementedError('Need to implement for Task 4.4')
+    # raise NotImplementedError('Need to implement for Task 4.4')
+    out = minitorch.nn.max(t, 0)
+    assert_close(np.amax(t.to_numpy(), axis=0).reshape(12), out.to_numpy().reshape(12))
 
 
 @pytest.mark.task4_4
@@ -60,9 +63,9 @@ def test_max_pool(t):
 def test_drop(t):
     q = minitorch.dropout(t, 0.0)
     idx = q._tensor.sample()
-    assert q[idx] == t[idx]
+    assert_close(q[idx], t[idx])
     q = minitorch.dropout(t, 1.0)
-    assert q[q._tensor.sample()] == 0.0
+    assert_close(q[q._tensor.sample()], 0.0)
 
 
 @pytest.mark.task4_4
